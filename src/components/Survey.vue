@@ -2,7 +2,7 @@
   <div class="survey">
     <div class="survey__container">
       <div class="header__button">
-        <div class="survey__close"></div>
+        <div class="survey__close" @click="closeDialog"></div>
       </div>
       <div class="survey__wrapper" v-if="currentStep === 0">
       <div class="survey__text">
@@ -66,17 +66,22 @@
           </div>
         </div>
         <div class="survey__grade">
-          <div class="survey__grade-item" v-for="item in 10" @click="sendResults(item)">
+          <div class="survey__grade-item" v-for="item in 10" @click="setRating(item)">
             {{ item }}
           </div>
         </div>
       </div>
       <div class="survey__wrapper" v-if="currentStep === 4">
         <div class="survey__header">
-          <div class="header__text">
+          <div class="header__text contacts">
             Спасибо за ответы
+            <br>
             Вы всегда можете написать нам на почту
-            vs.info@domru.ru
+            <br>
+            <span class="contacts__email">
+              vs.info@domru.ru
+            </span>
+            <br>
             Мы на связи!
           </div>
         </div>
@@ -113,7 +118,7 @@
       </div>
       <div class="footer__buttons" v-if="currentStep === 0">
         <PlateBtn colored label="Пройти сейчас" @click="nextStep"></PlateBtn>
-        <PlateBtn label="позже"></PlateBtn>
+        <PlateBtn label="позже" @click="closeDialog"></PlateBtn>
       </div>
       <div class="footer__buttons" v-if="currentStep === 1 || currentStep === 2 || currentStep === 3">
         <PlateBtn colored label="Далее" @click="nextStep"></PlateBtn>
@@ -131,7 +136,7 @@ import { ref } from 'vue'
 export default {
   components: { PlateBtn },
   setup() {
-    const { surveyResults } = results()
+    const { surveyResults, showDialog } = results()
 
     const currentStep = ref(0)
     const showComplain = ref(false)
@@ -145,7 +150,9 @@ export default {
       surveyResults.value[`${currentStep.value}`] = index
       if (index < 4) {
         showComplain.value = true
+        return
       }
+      nextStep()
     }
 
     const nextStep = () => {
@@ -156,6 +163,11 @@ export default {
         showComplain.value = false
       }
     }
+
+    const closeDialog = () => {
+      showDialog.value = false
+    }
+
     return {
       currentStep,
       sendResults,
@@ -163,7 +175,8 @@ export default {
       surveyResults,
       showComplain,
       nextStep,
-      complainMessage
+      complainMessage,
+      closeDialog
     }
   }
 }
@@ -171,141 +184,4 @@ export default {
 </script>
 <style>
 
-.survey {
-  height: 440px;
-  width: 360px;
-  background-image: url("../assets/opros_bg1.svg");
-  border-radius: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-}
-
-.survey__container {
-  height: 388px;
-  width: 320px;
-  border-radius: 20px;
-  background: white;
-  padding: 18px;
-  display: flex;
-  flex-direction: column;
-}
-
-.header__button {
-  display: flex;
-  flex-direction: row;
-  justify-content: end;
-}
-
-.survey__text {
-  font-weight: 700;
-  /*display: flex;*/
-}
-
-.footer__buttons {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  margin-top: auto;
-}
-
-.survey__close {
-  width: 12px;
-  height: 12px;
-  background-image: url("../assets/close.svg");
-}
-
-.survey__wrapper {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.survey__header {
-  display: flex;
-  flex-direction: row;
-  padding: 4px;
-}
-
-.header__icon {
-  width: 30px;
-  height: 30px;
-  padding-right: 20px;
-
-}
-
-.header__text {
-  font-weight: 700;
-  font-size: 21px;
-  line-height: 25px;
-}
-
-.survey__emojis {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  padding: 30px 0;
-}
-
-.survey__estimate {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-
-.survey__textarea {
-  padding-top: 18px;
-}
-
-.survey__grade {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  /*column-gap: 3px;*/
-  padding-top: 30px;
-  max-width: 320px;
-}
-
-.survey__grade-item {
-  height: 80px;
-  width: 26px;
-  background-color: #6BC379;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 18px;
-  line-height: 24px;
-}
-
-.survey__grade-item:nth-of-type(1) {
-  border-radius: 32px 0 0 32px;
-}
-
-.survey__grade-item:nth-of-type(10) {
-  border-radius: 0 32px 32px 0;
-}
-
-.survey__grade-item:nth-of-type(-n+3) {
-  background-color: #EF7A7A;
-}
-
-.survey__grade-item:nth-of-type(n + 3):nth-of-type(-n + 4) {
-  background-color: #F4AD6B;
-}
-
-.survey__grade-item:nth-of-type(n + 5):nth-of-type(-n + 6) {
-  background-color: #F4DC61;
-}
-
-.survey__grade-item:nth-of-type(n + 7):nth-of-type(-n + 8) {
-  background-color: #B0C78C;
-}
-
-textarea {
-  min-width: 320px;
-  min-height: 160px;
-  border: 1px solid #CFDBE0;
-  border-radius: 10px;
-}
 </style>
